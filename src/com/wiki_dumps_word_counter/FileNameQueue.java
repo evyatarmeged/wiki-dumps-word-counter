@@ -1,26 +1,23 @@
 package com.wiki_dumps_word_counter;
 
 import java.nio.file.Path;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
-public class FileNameQueue {
+public class FileNameQueue  extends ConcurrentLinkedQueue<Path> {
+    private static FileNameQueue fileNameQueue = new FileNameQueue();
 
-    private static Queue<Path> fileNames = new ConcurrentLinkedQueue<>();
+    private FileNameQueue() {}
 
-    static void insert(Path filePath) {
-        fileNames.add(filePath);
+    static FileNameQueue getInstance() {
+        return fileNameQueue;
     }
 
-
-    static Path pop() {
-        return fileNames.poll();
+    void insert(Path filePath) {
+        fileNameQueue.add(filePath);
     }
 
-    static Boolean isEmpty() {
-        return fileNames.isEmpty();
+    Path pop() {
+        return fileNameQueue.poll();
     }
-
-
 }
