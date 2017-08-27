@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 public class SimpleWorker implements Runnable {
     // TODO: Implement a method for stripping connection words / plural
 
-    private static final String CHARSET = "אבגדהוזחטיכלמנסעפצקרשת";
+    private static final String CHARSET = "אבגדהוזחטיכלמנסעפצקרשתםףץןך";
     private static final Pattern PATTERN = Pattern.compile("[^"+CHARSET+"]");
     private StringBuilder data;
     private Stream<String> lines;
