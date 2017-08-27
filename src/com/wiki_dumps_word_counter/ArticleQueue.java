@@ -4,7 +4,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class ArticleQueue extends ConcurrentLinkedQueue<String> {
-    // Singleton DP for Queue
     private static final ArticleQueue articleQueue = new ArticleQueue();
 
     private ArticleQueue(){}
