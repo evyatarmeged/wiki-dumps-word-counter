@@ -1,4 +1,6 @@
-package com.wiki_dumps_word_counter;
+package com.wiki_dumps_word_counter.workers;
+
+import com.wiki_dumps_word_counter.shared_state.FileNameQueue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +13,7 @@ public class FileNameRetrieverWorker implements Runnable {
     private String path;
     private FileNameQueue fileNameQueue = FileNameQueue.getInstance();
 
-    FileNameRetrieverWorker(String path) {
+    public FileNameRetrieverWorker(String path) {
         this.path = path;
     }
 
@@ -29,6 +31,7 @@ public class FileNameRetrieverWorker implements Runnable {
         }
     }
 
+    @Override
     public void run() {
         this.EnqueueFilePath();
     }

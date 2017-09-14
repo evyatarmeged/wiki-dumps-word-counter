@@ -1,37 +1,24 @@
-package com.wiki_dumps_word_counter;
+package com.wiki_dumps_word_counter.workers;
+
+import com.wiki_dumps_word_counter.pools.CounterWorkerPool;
+import com.wiki_dumps_word_counter.shared_state.SharedMap;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
-public class WordCounterWorker implements Runnable {
+public class CsvWriterWorker implements Runnable {
 
-    private Map<String, Integer> wordCount = new HashMap<>();
-    private ArticleQueue articleQueue = ArticleQueue.getInstance();
+    private final static Logger LOGGER = Logger.getLogger(CounterWorkerPool.class.getName());
+    private static SharedMap sharedMap = SharedMap.getInstance();
 
-
-    private void countWords() {
-        // Insert words to wordCount HashMap
-        while (!this.articleQueue.isEmpty()) {
-            String[] article = this.articleQueue.pop().split("\\s");
-            for (String word : article) {
-                if (word.length() > 2) {
-                    wordCount.merge(word, 1, Integer::sum);
-                }
-            }
-        }
-
-        Map<String,Integer> sortedWordCount = this.sortMapByValue(wordCount);
-        this.writeMapToCSV(sortedWordCount);
-    }
-
-    private Map<String, Integer> sortMapByValue(Map <String,Integer> unSortedMap) {
+    private static Map<String, Integer> sortMapByValue(SharedMap unSortedMap) {
         // Sort Map by value - descending order
         return unSortedMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
@@ -39,7 +26,10 @@ public class WordCounterWorker implements Runnable {
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
-    private void writeMapToCSV(Map<String,Integer> sortedWordCount) {
+
+    private static void writeMapToCSV() {
+        LOGGER.info("Writing to CSV...");
+        Map<String,Integer> sortedWordCount = sortMapByValue(sharedMap);
         // Write sorted key, value pairs to csv file
         String eol = System.getProperty("line.separator");
         try (Writer writer = new FileWriter("words.csv")) {
@@ -58,10 +48,10 @@ public class WordCounterWorker implements Runnable {
         } catch (IOException ex) {
             ex.printStackTrace(System.err);
         }
-
     }
+
         @Override
         public void run () {
-            this.countWords();
+            writeMapToCSV();
         }
     }

@@ -1,4 +1,7 @@
-package com.wiki_dumps_word_counter;
+package com.wiki_dumps_word_counter.workers;
+
+import com.wiki_dumps_word_counter.shared_state.ArticleQueue;
+import com.wiki_dumps_word_counter.shared_state.FileNameQueue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class SimpleWorker implements Runnable {
+public class ParserWorker implements Runnable {
     // TODO: Implement a method for stripping connection words / plural
 
     private static final String CHARSET = "אבגדהוזחטיכלמנסעפצקרשתםףץןך";
@@ -24,7 +27,7 @@ public class SimpleWorker implements Runnable {
         return text.trim();
     }
 
-    private void EnqueueParsedArticle() throws IOException {
+    private void enqueueParsedArticle() throws IOException {
         // Read file contents, remove unwanted chars and push to ArticleQueue
         while (!this.fileNameQueue.isEmpty()) {
             data = new StringBuilder();
@@ -38,7 +41,7 @@ public class SimpleWorker implements Runnable {
     @Override
     public void run() {
         try {
-            this.EnqueueParsedArticle();
+            this.enqueueParsedArticle();
         } catch (IOException e) {
             e.printStackTrace(System.err);
         }
